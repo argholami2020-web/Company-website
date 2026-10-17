@@ -1,61 +1,924 @@
-<!DOCTYPE html><html lang="fa" dir="rtl">
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>شرکت بازرگانی و پخش</title>
-    <style>
-        body {
-            font-family: Tahoma, Arial, sans-serif;
-            direction: rtl;
-            text-align: center;
-            background: #f4f6f8;
-            color: #263238;
-            margin: 0;
-            padding: 0;
-        }    header {
-        background: #17365d;
-        color: white;
-        padding: 35px 15px;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>PARTHA CRM | مدیریت مشتریان</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root {
+    --primary: #17365d;
+    --primary-light: #244b79;
+    --background: #f3f6fa;
+    --white: #ffffff;
+    --text: #243247;
+    --muted: #718096;
+    --border: #e2e8f0;
+    --success: #16794a;
+    --danger: #b42318;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--background);
+    color: var(--text);
+    font-family: Tahoma, Arial, sans-serif;
+    font-size: 14px;
+}
+
+button, input, select, textarea {
+    font-family: inherit;
+    font-size: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.container {
+    max-width: 1250px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.topbar {
+    background: var(--primary);
+    color: white;
+    padding: 18px 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.brand {
+    font-size: 22px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.brand small {
+    display: block;
+    font-size: 12px;
+    font-weight: normal;
+    margin-top: 7px;
+    letter-spacing: 0;
+}
+
+.card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.025);
+}
+
+.login-wrap {
+    max-width: 430px;
+    margin: 60px auto;
+}
+
+h1, h2, h3 {
+    margin-top: 0;
+}
+
+h2 {
+    font-size: 19px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin: 14px 0 7px;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    background: white;
+    color: var(--text);
+    outline: none;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: var(--primary-light);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 75px;
+}
+
+.btn {
+    display: inline-block;
+    border: 0;
+    border-radius: 7px;
+    padding: 12px 16px;
+    background: var(--primary);
+    color: white;
+}
+
+.btn:hover {
+    background: var(--primary-light);
+}
+
+.btn-secondary {
+    background: #e8eef6;
+    color: var(--primary);
+}
+
+.btn-danger {
+    background: var(--danger);
+    color: white;
+}
+
+.full {
+    width: 100%;
+    margin-top: 18px;
+}
+
+.message {
+    margin-top: 15px;
+    line-height: 1.9;
+    overflow-wrap: anywhere;
+}
+
+.error {
+    color: var(--danger);
+}
+
+.success {
+    color: var(--success);
+}
+
+.muted {
+    color: var(--muted);
+    line-height: 1.9;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stat {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+}
+
+.stat strong {
+    display: block;
+    font-size: 27px;
+    margin-top: 10px;
+    color: var(--primary);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.actions input {
+    flex: 1;
+    min-width: 180px;
+}
+
+.table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 750px;
+}
+
+th, td {
+    padding: 13px 10px;
+    text-align: right;
+    border-bottom: 1px solid var(--border);
+    line-height: 1.8;
+}
+
+th {
+    background: #f7f9fc;
+    white-space: nowrap;
+}
+
+.badge {
+    display: inline-block;
+    background: #e8eef6;
+    color: var(--primary);
+    padding: 4px 9px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+footer {
+    text-align: center;
+    color: var(--muted);
+    padding: 25px;
+    font-size: 12px;
+}
+
+@media (max-width: 700px) {
+    .container {
+        padding: 12px;
     }
 
-    main {
-        max-width: 800px;
-        margin: 35px auto;
-        padding: 25px;
-        background: white;
-        border-radius: 12px;
+    .card {
+        padding: 16px;
     }
 
-    h1 {
-        margin-bottom: 10px;
+    .stats {
+        grid-template-columns: 1fr;
+        gap: 10px;
     }
 
-    p {
-        line-height: 2;
+    .grid {
+        grid-template-columns: 1fr;
     }
 
-    footer {
-        padding: 20px;
-        color: #666;
+    .topbar {
+        padding: 16px;
     }
+
+    .brand {
+        font-size: 19px;
+    }
+
+    .actions .btn {
+        width: 100%;
+    }
+}
 </style>
-
 </head>
+
 <body>
-    <header>
-        <h1>به وب‌سایت شرکت ما خوش آمدید</h1>
-        <p>همراهی در مسیر رشد و موفقیت</p>
-    </header><main>
-    <h2>درباره شرکت</h2>
-    <p>
-        ما در زمینه بازرگانی، فروش و توزیع محصولات فعالیت می‌کنیم.
-        هدف ما ایجاد همکاری پایدار و ارزش‌آفرینی برای شرکای تجاری است.
-    </p>
+
+<header class="topbar">
+    <div class="brand">
+        PARTHA CRM
+        <small>سامانه مدیریت مشتریان</small>
+    </div>
+
+    <div id="userInfo" class="hidden">
+        <span id="userName"></span>
+        <button id="logoutBtn" class="btn btn-secondary">
+            خروج
+        </button>
+    </div>
+</header>
+
+<main class="container">
+
+    <!-- Login -->
+    <section id="loginSection" class="card login-wrap">
+        <h2>ورود به سامانه</h2>
+
+        <p class="muted">
+            برای ورود، ایمیل و رمز عبور حساب کاربری خود را وارد کنید.
+        </p>
+
+        <form id="loginForm">
+            <label for="email">ایمیل</label>
+            <input
+                id="email"
+                type="email"
+                autocomplete="username"
+                required
+            >
+
+            <label for="password">رمز عبور</label>
+            <input
+                id="password"
+                type="password"
+                autocomplete="current-password"
+                required
+            >
+
+            <button class="btn full" type="submit">
+                ورود
+            </button>
+        </form>
+
+        <div id="loginMessage" class="message" role="status"></div>
+    </section>
+
+    <!-- Dashboard -->
+    <section id="dashboard" class="hidden">
+
+        <div class="card">
+            <h2>داشبورد</h2>
+            <p id="roleDescription" class="muted"></p>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                تعداد مشتریان قابل مشاهده
+                <strong id="totalCustomers">۰</strong>
+            </div>
+
+            <div class="stat">
+                مشتریان فعال
+                <strong id="activeCustomers">۰</strong>
+            </div>
+
+            <div class="stat">
+                مشتریان غیرفعال
+                <strong id="inactiveCustomers">۰</strong>
+            </div>
+        </div>
+
+        <!-- New customer -->
+        <section class="card">
+            <h2>ثبت مشتری جدید</h2>
+
+            <form id="customerForm">
+
+                <div class="grid">
+
+                    <div>
+                        <label for="shopName">
+                            نام فروشگاه *
+                        </label>
+                        <input id="shopName" required maxlength="200">
+                    </div>
+
+                    <div>
+                        <label for="contactName">
+                            نام صاحب یا مسئول
+                        </label>
+                        <input id="contactName" maxlength="200">
+                    </div>
+
+                    <div>
+                        <label for="phone">
+                            شماره تماس
+                        </label>
+                        <input id="phone" type="tel" maxlength="30">
+                    </div>
+
+                    <div>
+                        <label for="province">
+                            استان
+                        </label>
+                        <input id="province" maxlength="100">
+                    </div>
+
+                    <div>
+                        <label for="city">
+                            شهر
+                        </label>
+                        <input id="city" maxlength="100">
+                    </div>
+
+                    <div>
+                        <label for="salesArea">
+                            منطقه فروش
+                        </label>
+                        <input id="salesArea" maxlength="150">
+                    </div>
+
+                    <div>
+                        <label for="status">
+                            وضعیت مشتری
+                        </label>
+                        <select id="status">
+                            <option value="active">فعال</option>
+                            <option value="pending">در انتظار همکاری</option>
+                            <option value="inactive">غیرفعال</option>
+                        </select>
+                    </div>
+
+                    <div id="assignmentBox" class="hidden">
+                        <label for="assignedTo">
+                            فروشنده مسئول
+                        </label>
+                        <select id="assignedTo"></select>
+                    </div>
+
+                </div>
+
+                <label for="address">نشانی</label>
+                <textarea id="address" maxlength="2000"></textarea>
+
+                <label for="notes">توضیحات</label>
+                <textarea id="notes" maxlength="3000"></textarea>
+
+                <button type="submit" class="btn full">
+                    ذخیره مشتری
+                </button>
+
+                <div id="customerMessage"
+                     class="message"
+                     role="status"></div>
+            </form>
+        </section>
+
+        <!-- Customer list -->
+        <section class="card">
+            <h2>فهرست مشتریان</h2>
+
+            <div class="actions">
+                <input
+                    id="searchInput"
+                    type="search"
+                    placeholder="جست‌وجو بر اساس نام، شهر، شماره تماس..."
+                >
+
+                <button id="refreshBtn" class="btn btn-secondary">
+                    به‌روزرسانی
+                </button>
+            </div>
+
+            <p id="listMessage" class="muted"></p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>کد</th>
+                            <th>نام فروشگاه</th>
+                            <th>مسئول</th>
+                            <th>شماره تماس</th>
+                            <th>شهر</th>
+                            <th>فروشنده مسئول</th>
+                            <th>وضعیت</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="customerRows"></tbody>
+                </table>
+            </div>
+        </section>
+
+    </section>
+
 </main>
 
 <footer>
-    تمامی حقوق محفوظ است.
+    PARTHA CRM — نسخه اولیه
 </footer>
 
+<script>
+"use strict";
+
+/*
+  این دو مقدار را با اطلاعات پروژه خودت جایگزین کن.
+  فقط از Project URL و Publishable Key یا کلید عمومی anon استفاده کن.
+  هرگز service_role یا secret key را در این فایل قرار نده.
+*/
+const SUPABASE_URL = "https://hpeuxudnsoxrrwcxrdjc.supabase.co";
+const SUPABASE_PUBLIC_KEY = "sb_publishable_9tCSFMx_Qst9eyIryI2ajA_reF_2BNP";
+
+const loginSection = document.getElementById("loginSection");
+const dashboard = document.getElementById("dashboard");
+const userInfo = document.getElementById("userInfo");
+
+const loginMessage = document.getElementById("loginMessage");
+const customerMessage = document.getElementById("customerMessage");
+const listMessage = document.getElementById("listMessage");
+
+const customerRows = document.getElementById("customerRows");
+const searchInput = document.getElementById("searchInput");
+
+let db = null;
+let currentUser = null;
+let currentProfile = null;
+let customerCache = [];
+let salespersonCache = [];
+
+function showMessage(element, message, type = "") {
+    element.textContent = message;
+    element.className = "message " + type;
+}
+
+function showSection(section) {
+    loginSection.classList.toggle("hidden", section !== "login");
+    dashboard.classList.toggle("hidden", section !== "dashboard");
+    userInfo.classList.toggle("hidden", section !== "dashboard");
+}
+
+function formatNumber(value) {
+    return new Intl.NumberFormat("fa-IR").format(value);
+}
+
+function statusLabel(status) {
+    const labels = {
+        active: "فعال",
+        inactive: "غیرفعال",
+        pending: "در انتظار همکاری"
+    };
+
+    return labels[status] || status || "—";
+}
+
+function salespersonName(id) {
+    if (!id) return "تخصیص داده نشده";
+
+    const person = salespersonCache.find(p => p.id === id);
+
+    return person ? person.full_name || "فروشنده" : "فروشنده";
+}
+
+function clearDashboard() {
+    currentUser = null;
+    currentProfile = null;
+    customerCache = [];
+    salespersonCache = [];
+
+    customerRows.replaceChildren();
+
+    document.getElementById("customerForm").reset();
+    document.getElementById("userName").textContent = "";
+}
+
+async function loadProfile(user) {
+    const { data, error } = await db
+        .from("profiles")
+        .select("id, full_name, role, is_active")
+        .eq("id", user.id)
+        .maybeSingle();
+
+    if (error) throw error;
+
+    if (!data) {
+        throw new Error("پروفایل کاربر پیدا نشد.");
+    }
+
+    if (!data.is_active) {
+        throw new Error("حساب کاربری غیرفعال است.");
+    }
+
+    if (!["admin", "salesperson"].includes(data.role)) {
+        throw new Error("نقش کاربر معتبر نیست.");
+    }
+
+    return data;
+}
+
+async function loadSalespeople() {
+    const box = document.getElementById("assignmentBox");
+    const select = document.getElementById("assignedTo");
+
+    box.classList.toggle("hidden", currentProfile.role !== "admin");
+
+    if (currentProfile.role !== "admin") return;
+
+    const { data, error } = await db
+        .from("profiles")
+        .select("id, full_name")
+        .eq("role", "salesperson")
+        .eq("is_active", true)
+        .order("full_name");
+
+    if (error) throw error;
+
+    salespersonCache = data || [];
+
+    select.replaceChildren();
+
+    const unassigned = document.createElement("option");
+    unassigned.value = "";
+    unassigned.textContent = "بدون تخصیص";
+    select.appendChild(unassigned);
+
+    salespersonCache.forEach(person => {
+        const option = document.createElement("option");
+        option.value = person.id;
+        option.textContent = person.full_name || "فروشنده";
+        select.appendChild(option);
+    });
+}
+
+async function loadCustomers() {
+    showMessage(listMessage, "در حال دریافت اطلاعات...");
+
+    const { data, error } = await db
+        .from("customers")
+        .select(
+            "id, customer_code, shop_name, contact_name, phone, " +
+            "province, city, sales_area, address, assigned_to, " +
+            "status, notes, created_at"
+        )
+        .order("customer_code", { ascending: false })
+        .limit(1000);
+
+    if (error) {
+        showMessage(listMessage, "خطا در دریافت مشتریان: " + error.message, "error");
+        return;
+    }
+
+    customerCache = data || [];
+    renderCustomers();
+}
+
+function renderCustomers() {
+    const query = searchInput.value.trim().toLocaleLowerCase("fa");
+
+    const filtered = customerCache.filter(customer => {
+        const values = [
+            customer.customer_code,
+            customer.shop_name,
+            customer.contact_name,
+            customer.phone,
+            customer.province,
+            customer.city,
+            customer.sales_area,
+            salespersonName(customer.assigned_to)
+        ];
+
+        return values.some(value =>
+            String(value || "").toLocaleLowerCase("fa").includes(query)
+        );
+    });
+
+    customerRows.replaceChildren();
+
+    filtered.forEach(customer => {
+        const row = document.createElement("tr");
+
+        const values = [
+            formatNumber(customer.customer_code),
+            customer.shop_name,
+            customer.contact_name || "—",
+            customer.phone || "—",
+            customer.city || "—",
+            salespersonName(customer.assigned_to),
+            statusLabel(customer.status)
+        ];
+
+        values.forEach(value => {
+            const cell = document.createElement("td");
+            cell.textContent = value;
+            row.appendChild(cell);
+        });
+
+        customerRows.appendChild(row);
+    });
+
+    document.getElementById("totalCustomers").textContent =
+        formatNumber(customerCache.length);
+
+    document.getElementById("activeCustomers").textContent =
+        formatNumber(customerCache.filter(c => c.status === "active").length);
+
+    document.getElementById("inactiveCustomers").textContent =
+        formatNumber(customerCache.filter(c => c.status === "inactive").length);
+
+    showMessage(
+        listMessage,
+        `${formatNumber(filtered.length)} مشتری نمایش داده می‌شود.`
+    );
+}
+
+async function openDashboard(user) {
+    currentUser = user;
+    currentProfile = await loadProfile(user);
+
+    showSection("dashboard");
+
+    document.getElementById("userName").textContent =
+        `${currentProfile.full_name || user.email} | ` +
+        (currentProfile.role === "admin" ? "مدیر" : "فروشنده");
+
+    document.getElementById("roleDescription").textContent =
+        currentProfile.role === "admin"
+        ? "پنل مدیریت: مشاهده تمام مشتریان و تخصیص آن‌ها به فروشندگان."
+        : "پنل فروشنده: مشاهده مشتریان اختصاص‌یافته به حساب شما.";
+
+    await loadSalespeople();
+    await loadCustomers();
+}
+
+async function handleSession(session) {
+    if (!session) {
+        clearDashboard();
+        showSection("login");
+        return;
+    }
+
+    try {
+        await openDashboard(session.user);
+    } catch (error) {
+        clearDashboard();
+        showSection("login");
+
+        showMessage(
+            loginMessage,
+            "ورود انجام شد، اما دسترسی سامانه تأیید نشد. " +
+            error.message,
+            "error"
+        );
+    }
+}
+
+async function initialize() {
+    if (
+        SUPABASE_URL.includes("YOUR_") ||
+        SUPABASE_PUBLIC_KEY.includes("YOUR_")
+    ) {
+        showMessage(
+            loginMessage,
+            "ابتدا آدرس پروژه و کلید عمومی Supabase را در کد وارد کنید.",
+            "error"
+        );
+        return;
+    }
+
+    if (!window.supabase) {
+        showMessage(
+            loginMessage,
+            "کتابخانه اتصال بارگذاری نشد. اتصال اینترنت یا مسدودکننده‌ها را بررسی کنید.",
+            "error"
+        );
+        return;
+    }
+
+    db = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLIC_KEY,
+        {
+            auth: {
+                persistSession: true,
+                autoRefreshToken: true,
+                detectSessionInUrl: true
+            }
+        }
+    );
+
+    const { data, error } = await db.auth.getSession();
+
+    if (error) {
+        showMessage(loginMessage, error.message, "error");
+        return;
+    }
+
+    await handleSession(data.session);
+
+    db.auth.onAuthStateChange((event, session) => {
+        if (event === "SIGNED_OUT") {
+            clearDashboard();
+            showSection("login");
+            return;
+        }
+
+        if (event === "SIGNED_IN" && session) {
+            setTimeout(() => handleSession(session), 0);
+        }
+    });
+}
+
+document.getElementById("loginForm").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    if (!db) {
+        showMessage(
+            loginMessage,
+            "اتصال پایگاه داده آماده نیست. تنظیمات اتصال را بررسی کنید.",
+            "error"
+        );
+        return;
+    }
+
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    showMessage(loginMessage, "در حال ورود...");
+
+    const { data, error } = await db.auth.signInWithPassword({
+        email,
+        password
+    });
+
+    if (error) {
+        showMessage(
+            loginMessage,
+            "ورود ناموفق بود. ایمیل، رمز عبور و تنظیمات احراز هویت را بررسی کنید.",
+            "error"
+        );
+        return;
+    }
+
+    try {
+        await openDashboard(data.user);
+    } catch (error) {
+        await db.auth.signOut();
+
+        showSection("login");
+
+        showMessage(
+            loginMessage,
+            "ورود تأیید نشد. وضعیت حساب و پروفایل را بررسی کنید.",
+            "error"
+        );
+    }
+});
+
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+    if (!db) return;
+
+    const { error } = await db.auth.signOut();
+
+    if (error) {
+        alert("خروج انجام نشد. دوباره تلاش کنید.");
+        return;
+    }
+
+    clearDashboard();
+    showSection("login");
+});
+
+document.getElementById("customerForm").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    if (!currentUser || !currentProfile || !db) return;
+
+    const assignedTo = currentProfile.role === "admin"
+        ? (document.getElementById("assignedTo").value || null)
+        : currentUser.id;
+
+    const payload = {
+        shop_name: document.getElementById("shopName").value.trim(),
+        contact_name: document.getElementById("contactName").value.trim() || null,
+        phone: document.getElementById("phone").value.trim() || null,
+        province: document.getElementById("province").value.trim() || null,
+        city: document.getElementById("city").value.trim() || null,
+        sales_area: document.getElementById("salesArea").value.trim() || null,
+        address: document.getElementById("address").value.trim() || null,
+        notes: document.getElementById("notes").value.trim() || null,
+        status: document.getElementById("status").value,
+        assigned_to: assignedTo
+    };
+
+    if (!payload.shop_name) {
+        showMessage(customerMessage, "نام فروشگاه الزامی است.", "error");
+        return;
+    }
+
+    showMessage(customerMessage, "در حال ذخیره مشتری...");
+
+    const { error } = await db
+        .from("customers")
+        .insert(payload);
+
+    if (error) {
+        showMessage(
+            customerMessage,
+            "ذخیره انجام نشد. دسترسی و اطلاعات ورودی را بررسی کنید.",
+            "error"
+        );
+        return;
+    }
+
+    document.getElementById("customerForm").reset();
+
+    showMessage(
+        customerMessage,
+        "مشتری با موفقیت ثبت شد.",
+        "success"
+    );
+
+    await loadCustomers();
+});
+
+searchInput.addEventListener("input", renderCustomers);
+
+document.getElementById("refreshBtn").addEventListener("click", async () => {
+    await loadCustomers();
+});
+
+initialize();
+</script>
+
 </body>
-</html>
+    </html>
